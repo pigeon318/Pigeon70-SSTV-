@@ -1,5 +1,5 @@
 # Pigeon70-SSTV-
-# Pigeon70 - A Custom SSTV Format
+
 
 **Pigeon70** is a custom-designed Slow Scan Television (SSTV) encoding and decoding format, built for experimental and educational purposes. It is inspired by classic SSTV formats like PD120 but introduces unique specifications optimized for modern, hobbyist-level transmission and decoding via web technologies.
 

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pigeon70 SSTV - Demo & Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .demo-section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .test-image {
+            max-width: 200px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .test-image:hover {
+            transform: scale(1.05);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .specs-table th,
+        .specs-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .specs-table th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .specs-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐦 Pigeon70 SSTV Demo & Test</h1>
+            <p>Test the encoder and decoder with sample images and audio</p>
+        </div>
+
+        <div class="content">
+            <!-- Test Images Section -->
+            <div class="demo-section">
+                <h2>🖼️ Test Images</h2>
+                <p>Click on any test image to load it into the encoder:</p>
+                
+                <div class="grid">
+                    <div>
+                        <h3>Color Test Pattern</h3>
+                        <canvas id="colorTest" width="320" height="240" class="test-image"></canvas>
+                        <br>
+                        <button class="btn" onclick="loadTestImage('colorTest')">Load Color Test</button>
+                    </div>
+                    
+                    <div>
+                        <h3>Gradient Test</h3>
+                        <canvas id="gradientTest" width="320" height="240" class="test-image"></canvas>
+                        <br>
+                        <button class="btn" onclick="loadTestImage('gradientTest')">Load Gradient</button>
+                    </div>
+                    
+                    <div>
+                        <h3>Text Test</h3>
+                        <canvas id="textTest" width="320" height="240" class="test-image"></canvas>
+                        <br>
+                        <button class="btn" onclick="loadTestImage('textTest')">Load Text</button>
+                    </div>
+                    
+                    <div>
+                        <h3>Noise Test</h3>
+                        <canvas id="noiseTest" width="320" height="240" class="test-image"></canvas>
+                        <br>
+                        <button class="btn" onclick="loadTestImage('noiseTest')">Load Noise</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audio Test Section -->
+            <div class="demo-section">
+                <h2>🎵 Audio Test Tones</h2>
+                <p>Generate test tones for calibration and testing:</p>
+                
+                <div class="audio-controls">
+                    <button class="btn btn-success" onclick="generateTestTone(1900, 2)">VIS Code (1900 Hz)</button>
+                    <button class="btn btn-success" onclick="generateTestTone(1200, 1)">Sync Pulse (1200 Hz)</button>
+                    <button class="btn btn-success" onclick="generateTestTone(1500, 1)">Separator (1500 Hz)</button>
+                    <button class="btn btn-warning" onclick="generateSweepTone()">Frequency Sweep</button>
+                </div>
+                
+                <div id="audioStatus"></div>
+            </div>
+
+            <!-- Specifications Table -->
+            <div class="demo-section">
+                <h2>📋 Pigeon70 Specifications</h2>
+                <table class="specs-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Resolution</td>
+                            <td>320 × 240</td>
+                            <td>Image dimensions in pixels</td>
+                        </tr>
+                        <tr>
+                            <td>Transmission Time</td>
+                            <td>~70 seconds</td>
+                            <td>Total time to transmit one image</td>
+                        </tr>
+                        <tr>
+                            <td>Audio Range</td>
+                            <td>1500-2300 Hz</td>
+                            <td>Frequency range for pixel data</td>
+                        </tr>
+                        <tr>
+                            <td>VIS Code</td>
+                            <td>1900 Hz, 300ms</td>
+                            <td>Format identification signal</td>
+                        </tr>
+                        <tr>
+                            <td>Sync Pulse</td>
+                            <td>1200 Hz, 10ms</td>
+                            <td>Line synchronization signal</td>
+                        </tr>
+                        <tr>
+                            <td>Separator</td>
+                            <td>1500 Hz, 10ms</td>
+                            <td>Separates sync from pixel data</td>
+                        </tr>
+                        <tr>
+                            <td>Pixel Duration</td>
+                            <td>~0.31ms</td>
+                            <td>Duration of each color tone</td>
+                        </tr>
+                        <tr>
+                            <td>Color Encoding</td>
+                            <td>RGB24</td>
+                            <td>3 tones per pixel (R, G, B)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Quick Start -->
+            <div class="demo-section">
+                <h2>🚀 Quick Start</h2>
+                <ol>
+                    <li><strong>Encode:</strong> Load a test image above, then go to the main interface to encode it to SSTV audio</li>
+                    <li><strong>Play:</strong> Use the generated audio to test transmission or play it through speakers</li>
+                    <li><strong>Decode:</strong> Record the audio (via microphone or file) and decode it back to an image</li>
+                    <li><strong>Compare:</strong> Check how well the decoded image matches the original</li>
+                </ol>
+                
+                <div class="audio-controls">
+                    <button class="btn" onclick="window.open('index.html', '_blank')">Open Main Interface</button>
+                    <button class="btn btn-warning" onclick="runFullTest()">Run Full Test Cycle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="sstv-encoder.js"></script>
+    <script src="audio-utils.js"></script>
+    <script>
+        let encoder = new Pigeon70Encoder();
+        let audioUtils = new AudioUtils();
+
+        // Generate test images
+        function generateTestImages() {
+            // Color test pattern
+            const colorCanvas = document.getElementById('colorTest');
+            const colorCtx = colorCanvas.getContext('2d');
+            const colorImageData = colorCtx.createImageData(320, 240);
+            
+            for (let y = 0; y < 240; y++) {
+                for (let x = 0; x < 320; x++) {
+                    const index = (y * 320 + x) * 4;
+                    colorImageData.data[index] = Math.floor((x / 320) * 255);     // R
+                    colorImageData.data[index + 1] = Math.floor((y / 240) * 255); // G
+                    colorImageData.data[index + 2] = Math.floor(((x + y) / 560) * 255); // B
+                    colorImageData.data[index + 3] = 255; // A
+                }
+            }
+            colorCtx.putImageData(colorImageData, 0, 0);
+
+            // Gradient test
+            const gradientCanvas = document.getElementById('gradientTest');
+            const gradientCtx = gradientCanvas.getContext('2d');
+            const gradient = gradientCtx.createLinearGradient(0, 0, 320, 240);
+            gradient.addColorStop(0, '#ff0000');
+            gradient.addColorStop(0.5, '#00ff00');
+            gradient.addColorStop(1, '#0000ff');
+            gradientCtx.fillStyle = gradient;
+            gradientCtx.fillRect(0, 0, 320, 240);
+
+            // Text test
+            const textCanvas = document.getElementById('textTest');
+            const textCtx = textCanvas.getContext('2d');
+            textCtx.fillStyle = '#000000';
+            textCtx.fillRect(0, 0, 320, 240);
+            textCtx.fillStyle = '#ffffff';
+            textCtx.font = '24px Arial';
+            textCtx.textAlign = 'center';
+            textCtx.fillText('PIGEON70', 160, 100);
+            textCtx.fillText('SSTV TEST', 160, 140);
+            textCtx.font = '16px Arial';
+            textCtx.fillText('320x240', 160, 180);
+
+            // Noise test
+            const noiseCanvas = document.getElementById('noiseTest');
+            const noiseCtx = noiseCanvas.getContext('2d');
+            const noiseImageData = noiseCtx.createImageData(320, 240);
+            
+            for (let i = 0; i < noiseImageData.data.length; i += 4) {
+                const noise = Math.floor(Math.random() * 256);
+                noiseImageData.data[i] = noise;     // R
+                noiseImageData.data[i + 1] = noise; // G
+                noiseImageData.data[i + 2] = noise; // B
+                noiseImageData.data[i + 3] = 255;   // A
+            }
+            noiseCtx.putImageData(noiseImageData, 0, 0);
+        }
+
+        function loadTestImage(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const imageData = canvas.getContext('2d').getImageData(0, 0, 320, 240);
+            
+            // Store in localStorage for the main interface to pick up
+            const canvas2 = document.createElement('canvas');
+            canvas2.width = 320;
+            canvas2.height = 240;
+            canvas2.getContext('2d').putImageData(imageData, 0, 0);
+            
+            localStorage.setItem('pigeon70_test_image', canvas2.toDataURL());
+            
+            showStatus('Test image loaded! Switch to the main interface to encode it.', 'success');
+        }
+
+        async function generateTestTone(frequency, duration) {
+            try {
+                showStatus(`Generating ${frequency} Hz tone for ${duration} seconds...`, 'info');
+                const tone = audioUtils.generateTestTone(frequency, duration);
+                const source = await encoder.playAudio(tone);
+                
+                source.onended = () => {
+                    showStatus(`Test tone completed.`, 'success');
+                };
+                
+            } catch (error) {
+                showStatus(`Error generating tone: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateSweepTone() {
+            try {
+                showStatus('Generating frequency sweep from 1500-2300 Hz...', 'info');
+                const sweep = audioUtils.generateSweepTone(1500, 2300, 3);
+                const source = await encoder.playAudio(sweep);
+                
+                source.onended = () => {
+                    showStatus('Frequency sweep completed.', 'success');
+                };
+                
+            } catch (error) {
+                showStatus(`Error generating sweep: ${error.message}`, 'error');
+            }
+        }
+
+        async function runFullTest() {
+            showStatus('Running full test cycle...', 'info');
+            
+            try {
+                // Generate test image
+                const testCanvas = document.getElementById('colorTest');
+                const imageData = testCanvas.getContext('2d').getImageData(0, 0, 320, 240);
+                
+                // Encode
+                showStatus('Encoding test image...', 'info');
+                const audioBuffer = await encoder.encodeImage(imageData);
+                
+                // Play
+                showStatus('Playing encoded audio...', 'info');
+                const source = await encoder.playAudio(audioBuffer);
+                
+                source.onended = () => {
+                    showStatus('Full test cycle completed! Check the main interface for decoding.', 'success');
+                };
+                
+            } catch (error) {
+                showStatus(`Test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('audioStatus');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // Initialize demo when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            generateTestImages();
+            showStatus('Demo page loaded. Click on test images to load them into the encoder.', 'info');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
